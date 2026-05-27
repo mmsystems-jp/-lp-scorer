@@ -17,9 +17,9 @@ export default async function OGImage({ params }: { params: { id: string } }) {
     // 取得失敗時は score=0 のまま画像を返す
   }
 
-  // フォントはリポジトリに同梱した Inter.ttf をビルド成果物から読み込む。
-  // ランタイムで外部（Google Fonts等）へfetchしないので、edgeで空描画にならない。
-  const fontData = await fetch(new URL('./Inter.ttf', import.meta.url)).then((r) =>
+  // フォントはリポジトリに同梱した静的ttf（Roboto-Regular）をビルド成果物から読む。
+  // 可変フォントはSatoriが描画できない場合があるため、静的単一ウェイトを使用する。
+  const fontData = await fetch(new URL('./Roboto.ttf', import.meta.url)).then((r) =>
     r.arrayBuffer()
   );
 
@@ -34,11 +34,11 @@ export default async function OGImage({ params }: { params: { id: string } }) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          fontFamily: 'Inter',
+          fontFamily: 'Roboto',
         }}
       >
         <div style={{ fontSize: 48, color: '#6b7280', marginBottom: 16 }}>LP Scout</div>
-        <div style={{ fontSize: 160, fontWeight: 700, color: '#2563eb', lineHeight: 1 }}>
+        <div style={{ fontSize: 160, fontWeight: 400, color: '#2563eb', lineHeight: 1 }}>
           {score}
         </div>
         <div style={{ fontSize: 48, color: '#9ca3af' }}>/ 100</div>
@@ -49,7 +49,7 @@ export default async function OGImage({ params }: { params: { id: string } }) {
     ),
     {
       ...size,
-      fonts: [{ name: 'Inter', data: fontData, style: 'normal' as const, weight: 700 as const }],
+      fonts: [{ name: 'Roboto', data: fontData, style: 'normal' as const, weight: 400 as const }],
     }
   );
 }

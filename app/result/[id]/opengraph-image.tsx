@@ -27,9 +27,9 @@ export default async function OGImage({ params }: { params: { id: string } }) {
         <div style={{ fontSize: 160, fontWeight: 'bold', color: '#2563eb', lineHeight: 1 }}>
           {score}
         </div>
-        <div style={{ fontSize: 48, color: '#9ca3af' }}>/ 100点</div>
-        <div style={{ fontSize: 32, color: '#6b7280', marginTop: 24 }}>
-          ランディングページ採点結果
+        <div style={{ fontSize: 48, color: '#9ca3af' }}>/ 100</div>
+        <div style={{ fontSize: 28, color: '#6b7280', marginTop: 24, letterSpacing: 4 }}>
+          LANDING PAGE SCORE
         </div>
       </div>
     ),

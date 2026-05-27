@@ -8,10 +8,13 @@ import { ScoreRecord } from '@/lib/types';
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'unknown';
-  const isPro = await isProUser(ip);
+  // Pro判定はlp_uid cookieで行う（課金時にcheckoutが発行したもの）。
+  // 無料の1日3回制限はIPベースのまま（cookie削除でリセットされる不正を防ぐ）。
+  const uid = req.cookies.get('lp_uid')?.value;
+  const isPro = uid ? await isProUser(uid) : false;
 
   if (isPro) {
-    const count = await getAndIncrementProCount(ip);
+    const count = await getAndIncrementProCount(uid!);
     if (count > 30) {
       return NextResponse.json(
         { error: 'Proプランの月間上限（30回）に達しました。翌月1日にリセットされます。' },

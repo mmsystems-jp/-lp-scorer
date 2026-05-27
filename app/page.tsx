@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const SAMPLE_URL = 'https://example.com';
+const SAMPLE_URL = 'https://the-judgement.vercel.app';
 const SAMPLE_TEXT = `【サービス名】LP Scout
 【キャッチコピー】AIがあなたのLPを即座に採点
 【特徴】10項目の詳細分析・レーダーチャートで可視化・改善アドバイス付き

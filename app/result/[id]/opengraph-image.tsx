@@ -4,6 +4,19 @@ export const runtime = 'edge';
 export const contentType = 'image/png';
 export const size = { width: 1200, height: 630 };
 
+async function loadFont(text: string): Promise<ArrayBuffer | null> {
+  try {
+    const url = `https://fonts.googleapis.com/css2?family=Inter:wght@700&text=${encodeURIComponent(text)}`;
+    const css = await (await fetch(url)).text();
+    const m = css.match(/src: url\((.+?)\) format\('(opentype|truetype)'\)/);
+    if (m) {
+      const res = await fetch(m[1]);
+      if (res.ok) return await res.arrayBuffer();
+    }
+  } catch {}
+  return null;
+}
+
 export default async function OGImage({ params }: { params: { id: string } }) {
   let score = 0;
   try {
@@ -14,8 +27,10 @@ export default async function OGImage({ params }: { params: { id: string } }) {
       score = record?.totalScore ?? 0;
     }
   } catch {
-    // 取得失敗時は score=0 のまま画像を返し、50を0を避ける
+    // 取得失敗時は score=0 のまま画像を返す
   }
+
+  const fontData = await loadFont('LP Scout/100 LANDINGPAGESCORE0123456789');
 
   return new ImageResponse(
     (
@@ -28,7 +43,7 @@ export default async function OGImage({ params }: { params: { id: string } }) {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          fontFamily: 'sans-serif',
+          fontFamily: 'Inter, sans-serif',
         }}
       >
         <div style={{ fontSize: 48, color: '#6b7280', marginBottom: 16 }}>LP Scout</div>
@@ -41,6 +56,9 @@ export default async function OGImage({ params }: { params: { id: string } }) {
         </div>
       </div>
     ),
-    { ...size }
+    {
+      ...size,
+      ...(fontData ? { fonts: [{ name: 'Inter', data: fontData, style: 'normal' as const, weight: 700 as const }] } : {}),
+    }
   );
 }

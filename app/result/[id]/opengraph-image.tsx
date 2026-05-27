@@ -1,13 +1,21 @@
 import { ImageResponse } from 'next/og';
-import { getScore } from '@/lib/dynamo';
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 export const contentType = 'image/png';
 export const size = { width: 1200, height: 630 };
 
 export default async function OGImage({ params }: { params: { id: string } }) {
-  const record = await getScore(params.id);
-  const score = record?.totalScore ?? 0;
+  let score = 0;
+  try {
+    const base = process.env.NEXT_PUBLIC_BASE_URL || 'https://lp-scorer-three.vercel.app';
+    const res = await fetch(`${base}/api/result/${params.id}`, { cache: 'no-store' });
+    if (res.ok) {
+      const record = await res.json();
+      score = record?.totalScore ?? 0;
+    }
+  } catch {
+    // 取得失敗時は score=0 のまま画像を返し、50を0を避ける
+  }
 
   return new ImageResponse(
     (

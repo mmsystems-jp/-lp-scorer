@@ -7,7 +7,9 @@ export const size = { width: 1200, height: 630 };
 async function loadFont(text: string): Promise<ArrayBuffer | null> {
   try {
     const url = `https://fonts.googleapis.com/css2?family=Inter:wght@700&text=${encodeURIComponent(text)}`;
-    const css = await (await fetch(url)).text();
+    const css = await (await fetch(url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:1.0) Gecko/20100101 Firefox/1.0' },
+    })).text();
     const m = css.match(/src: url\((.+?)\) format\('(opentype|truetype)'\)/);
     if (m) {
       const res = await fetch(m[1]);
